@@ -3,30 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#765887">
 <title>ヘタリア勉強ノート</title>
 <style>
-body{font-family:sans-serif;background:#f7f0fa;color:#332b40;padding:18px;max-width:500px;margin:auto}h1{color:#715783}input,select,button{font-size:16px;padding:10px;border-radius:10px;border:1px solid #d5c5df;margin:4px 0}button{background:#715783;color:white}li{background:white;padding:12px;margin:8px 0;border-radius:12px;list-style:none}#progress{font-weight:bold}
+:root {
+  --purple:#765887;
+  --pale:#f7f0fa;
+  --line:#dfcfe7;
+  --ink:#382d40;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:20px;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--pale); color:var(--ink);
+}
+main { max-width:650px; margin:auto; }
+h1 { color:var(--purple); font-size:27px; }
+h2 { font-size:18px; margin:0 0 12px; }
+.panel {
+  background:white; border:1px solid var(--line);
+  border-radius:18px; padding:16px; margin:16px 0;
+}
+button, input, select {
+  font:inherit; border-radius:12px; padding:12px;
+  border:1px solid var(--line); max-width:100%;
+}
+button {
+  background:var(--purple); color:white;
+  border:0; cursor:pointer;
+}
+input, select { background:white; color:var(--ink); }
+input[type="date"] { width:100%; }
+.field { display:flex; gap:8px; flex-wrap:wrap; }
+.field input[type="text"] { flex:1; min-width:150px; }
+.field select { flex:1; min-width:110px; }
+.muted { color:#776b7f; font-size:14px; }
+.big { font-size:22px; font-weight:700; }
+.task {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 0; border-bottom:1px solid #eee5f2;
+}
+.task:last-child { border-bottom:0; }
+.task .taskname { flex:1; overflow-wrap:anywhere; }
+.task.done .taskname {
+  text-decoration:line-through; color:#8d8193;
+}
+.task input[type="checkbox"] { width:20px; height:20px; }
+.delete { background:#eee7f1; color:#594564; padding:8px 10px; }
+.avatar {
+  width:68px; height:68px; border-radius:50%;
+  background:#f0e4f7; display:flex; align-items:center;
+  justify-content:center; font-size:36px;
+  border:2px solid var(--line);
+}
+.character { display:flex; align-items:center; gap:14px; }
+.progress {
+  height:12px; background:#eee5f2; border-radius:99px;
+  overflow:hidden; margin:10px 0;
+}
+#bar { height:100%; width:0%; background:var(--purple); }
+.smallbtn { padding:8px 12px; }
 </style>
 </head>
 <body>
-<h1>🌍 ヘタリア勉強ノート</h1>
-<p>推しと一緒に、今日も一歩ずつ！</p>
-<p id="progress">達成率：0%</p>
-<select id="subject"><option>国語</option><option>数学</option><option>英語</option><option>理科</option><option>社会</option></select>
-<input id="task" placeholder="課題を入力してね">
-<button onclick="addTask()">課題を追加</button>
-<ul id="list"></ul>
-<p id="cheer">🇮🇹 イタリア：ひとつずつ頑張ろ〜！</p>
-<button onclick="changeCheer()">応援キャラを変える</button>
+<main>
+  <h1>🌍 ヘタリア勉強ノート</h1>
+  <p>推しと一緒に、今日も一歩ずつ！</p>
+
+  <section class="panel">
+    <h2>📅 今日の課題</h2>
+    <label for="day">管理する日付</label>
+    <input id="day" type="date">
+    <p class="muted">日付を変えると、その日の課題に切り替わるよ。</p>
+  </section>
+
+  <section class="panel">
+    <h2>➕ 課題を追加</h2>
+    <div class="field">
+      <select id="subject" aria-label="教科">
+        <option>国語</option><option>数学</option>
+        <option>英語</option><option>理科</option>
+        <option>社会</option><option>その他</option>
+      </select>
+      <input id="taskInput" type="text"
+        placeholder="例：数学ワーク p.40" maxlength="120">
+    </div>
+    <p><button id="addBtn">課題を追加</button></p>
+  </section>
+
+  <section class="panel">
+    <h2>⭐ 今日の達成率</h2>
+    <div class="big" id="rate">0%</div>
+    <div class="progress"><div id="bar"></div></div>
+    <p id="count" class="muted">0件中0件完了</p>
+    <p class="big">🔥 連続記録：<span id="streak">0</span>日</p>
+    <p class="muted">課題を1つ以上完了した日を数えるよ。</p>
+  </section>
+
+  <section class="panel">
+    <h2>📚 教科で絞り込む</h2>
+    <select id="filter" aria-label="表示する教科">
+      <option value="すべて">すべての教科</option>
+      <option>国語</option><option>数学</option>
+      <option>英語</option><option>理科</option>
+      <option>社会</option><option>その他</option>
+    </select>
+    <div id="tasks"></div>
+    <p id="empty" class="muted">この日の課題はまだないよ。追加してみよう！</p>
+  </section>
+
+  <section class="panel">
+    <h2>💌 推しからの応援</h2>
+    <div class="character">
+      <div class="avatar" id="avatar">🇮🇹</div>
+      <div>
+        <strong id="charName">イタリア</strong>
+        <p id="cheer">ひとつずつ頑張ろ〜！</p>
+      </div>
+    </div>
+    <p><button id="changeBtn">応援キャラを変える</button></p>
+  </section>
+
+  <p class="muted">
+    💾 課題はこのブラウザに保存されます。
+    ブラウザのデータを消すと課題も消える場合があります。
+  </p>
+</main>
+
 <script>
-let tasks=[];
-try{tasks=JSON.parse(localStorage.getItem("hetaliaTasks")||"[]")}catch(e){}
-const cheers=["🇮🇹 イタリア：ひとつずつ頑張ろ〜！","🇩🇪 ドイツ：計画的に進めるんだ！","🇯🇵 日本：一歩ずつ進みましょう。","🇬🇧 イギリス：ほら、始めるぞ！","🇺🇸 アメリカ：君ならできる！","🇨🇳 中国：焦らず進めるある！"];
-let ci=0;
-function save(){try{localStorage.setItem("hetaliaTasks",JSON.stringify(tasks))}catch(e){alert("この画面では保存できない場合があるよ。公開したアプリで試してね。")}}
-function render(){let list=document.getElementById("list");list.innerHTML="";tasks.forEach((t,i)=>{let li=document.createElement("li");let label=document.createElement("label");let cb=document.createElement("input");cb.type="checkbox";cb.checked=t.done;cb.onchange=()=>{tasks[i].done=cb.checked;save();render()};label.append(cb,document.createTextNode(" "+t.subject+"："+t.name));if(t.done)label.style.textDecoration="line-through";let del=document.createElement("button");del.textContent="削除";del.onclick=()=>{tasks.splice(i,1);save();render()};li.append(label,document.createElement("br"),del);list.append(li)});let done=tasks.filter(t=>t.done).length;document.getElementById("progress").textContent="達成率："+(tasks.length?Math.round(done/tasks.length*100):0)+"%（"+done+"/"+tasks.length+"件）"}
-function addTask(){let input=document.getElementById("task");if(!input.value.trim())return;tasks.push({subject:document.getElementById("subject").value,name:input.value.trim(),done:false});input.value="";save();render()}
-function changeCheer(){ci=(ci+1)%cheers.length;document.getElementById("cheer").textContent=cheers[ci]}
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "hetaliaStudyNoteV2";
+
+const characters = [
+  {flag:"🇮🇹",name:"イタリア",msg:"ひとつずつ頑張ろ〜！"},
+  {flag:"🇩🇪",name:"ドイツ",msg:"計画を立てて、着実に進めよう。"},
+  {flag:"🇯🇵",name:"日本",msg:"焦らず、一つずつ取り組みましょう。"},
+  {flag:"🇬🇧",name:"イギリス",msg:"やると決めたら、最後までやり抜け！"},
+  {flag:"🇺🇸",name:"アメリカ",msg:"君ならできるぞ！ Let's go!"},
+  {flag:"🇨🇳",name:"中国",msg:"少しずつ続けるのが大事ある！"}
+];
+
+function localDate(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+let data = {tasks:[], character:0, completedDays:[]};
+
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed.tasks)) data.tasks = parsed.tasks;
+    if (Number.isInteger(parsed.character)) data.character = parsed.character;
+    if (Array.isArray(parsed.completedDays)) data.completedDays = parsed.completedDays;
+  }
+} catch (e) {
+  console.log("保存データを読み込めませんでした");
+}
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    alert("保存できなかったよ。ブラウザの設定を確認してね。");
+  }
+}
+function tasksForDay() {
+  return data.tasks.filter(t => t.date === $("day").value);
+}
+function updateCompletedDays() {
+  const days = new Set(data.tasks.filter(t => t.done).map(t => t.date));
+  data.completedDays = [...days].sort();
+}
+function getStreak() {
+  const days = new Set(data.completedDays);
+  let d = new Date();
+  if (!days.has(localDate(d))) d.setDate(d.getDate()-1);
+  let count = 0;
+  while (days.has(localDate(d))) {
+    count++;
+    d.setDate(d.getDate()-1);
+  }
+  return count;
+}
+function renderTasks() {
+  const all = tasksForDay();
+  const filter = $("filter").value;
+  const shown = all.filter(t => filter === "すべて" || t.subject === filter);
+  $("tasks").replaceChildren();
+  $("empty").hidden = shown.length > 0;
+
+  shown.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "task" + (task.done ? " done" : "");
+
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = task.done;
+    check.setAttribute("aria-label", task.name + " 完了");
+    check.addEventListener("change", () => {
+      task.done = check.checked;
+      updateCompletedDays();
+      save();
+      render();
+    });
+
+    const name = document.createElement("span");
+    name.className = "taskname";
+    name.textContent = task.subject + "： " + task.name;
+
+    const del = document.createElement("button");
+    del.className = "delete";
+    del.textContent = "削除";
+    del.addEventListener("click", () => {
+      if (confirm("この課題を削除する？")) {
+        data.tasks = data.tasks.filter(t => t.id !== task.id);
+        updateCompletedDays();
+        save();
+        render();
+      }
+    });
+
+    row.append(check, name, del);
+    $("tasks").append(row);
+  });
+
+  const done = all.filter(t => t.done).length;
+  const rate = all.length ? Math.round(done / all.length * 100) : 0;
+  $("rate").textContent = rate + "%";
+  $("bar").style.width = rate + "%";
+  $("count").textContent = `${all.length}件中${done}件完了`;
+  $("streak").textContent = getStreak();
+}
+function renderCharacter() {
+  const c = characters[data.character % characters.length];
+  $("avatar").textContent = c.flag;
+  $("charName").textContent = c.name;
+  $("cheer").textContent = c.msg;
+}
+function render() {
+  renderTasks();
+  renderCharacter();
+}
+$("day").value = localDate();
+$("day").addEventListener("change", renderTasks);
+$("filter").addEventListener("change", renderTasks);
+
+$("addBtn").addEventListener("click", () => {
+  const name = $("taskInput").value.trim();
+  if (!name) {
+    alert("課題を入力してね！");
+    return;
+  }
+  data.tasks.push({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    date: $("day").value || localDate(),
+    subject: $("subject").value,
+    name,
+    done:false
+  });
+  $("taskInput").value = "";
+  updateCompletedDays();
+  save();
+  render();
+});
+$("taskInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") $("addBtn").click();
+});
+$("changeBtn").addEventListener("click", () => {
+  data.character = (data.character + 1) % characters.length;
+  save();
+  renderCharacter();
+});
+
+updateCompletedDays();
 render();
 </script>
 </body>
