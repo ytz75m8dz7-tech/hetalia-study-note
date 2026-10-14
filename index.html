@@ -475,9 +475,23 @@ button.full { width: 100%; margin-top: 12px; }
 <!-- ヘタリア勉強ノート：キャラ応援画像テスト -->
 <section id="hetalia-character-test" style="text-align:center; padding:20px; margin:16px 0; border-radius:16px; background:#f5efe3;">
   <h2 style="color:#66513c;">今日も勉強お疲れさま！</h2>
-  <p id="hetalia-message">今日の勉強も一歩ずつ進もう！</p>
+  <script>
+(function () {
+  const button = document.getElementById('hetalia-cheer-button');
+  const message = document.getElementById('hetalia-message');
+
+  if (button && message) {
+    button.addEventListener('click', function () {
+      message.textContent = 'よく頑張ったね！明日も一緒に頑張ろう！';
+    });
+  }
+})();
+</script>
   <div style="font-size:64px;" aria-label="日本のキャラクターをイメージした絵文字">🇯🇵</div>
-  <button type="button" onclick="document.getElementById('hetalia-message').textContent='よく頑張ったね！明日も一緒に頑張ろう！'" style="padding:12px 18px; border:0; border-radius:10px; background:#657d62; color:white; font-size:16px;">
+  <button type="button" id="hetalia-cheer-button"
+  style="padding:12px 18px; border:0; border-radius:10px; background:#657d62; color:white; font-size:16px;">
+  勉強お疲れさま！
+</button>style="padding:12px 18px; border:0; border-radius:10px; background:#657d62; color:white; font-size:16px;">
     勉強お疲れさま！
   </button>
 </section>
