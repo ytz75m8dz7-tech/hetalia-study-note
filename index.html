@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ヘタリア勉強ノート</title>
+<style>
+body{font-family:sans-serif;background:#f7f0fa;color:#332b40;padding:18px;max-width:500px;margin:auto}h1{color:#715783}input,select,button{font-size:16px;padding:10px;border-radius:10px;border:1px solid #d5c5df;margin:4px 0}button{background:#715783;color:white}li{background:white;padding:12px;margin:8px 0;border-radius:12px;list-style:none}#progress{font-weight:bold}
+</style>
+</head>
+<body>
+<h1>🌍 ヘタリア勉強ノート</h1>
+<p>推しと一緒に、今日も一歩ずつ！</p>
+<p id="progress">達成率：0%</p>
+<select id="subject"><option>国語</option><option>数学</option><option>英語</option><option>理科</option><option>社会</option></select>
+<input id="task" placeholder="課題を入力してね">
+<button onclick="addTask()">課題を追加</button>
+<ul id="list"></ul>
+<p id="cheer">🇮🇹 イタリア：ひとつずつ頑張ろ〜！</p>
+<button onclick="changeCheer()">応援キャラを変える</button>
+<script>
+let tasks=[];
+try{tasks=JSON.parse(localStorage.getItem("hetaliaTasks")||"[]")}catch(e){}
+const cheers=["🇮🇹 イタリア：ひとつずつ頑張ろ〜！","🇩🇪 ドイツ：計画的に進めるんだ！","🇯🇵 日本：一歩ずつ進みましょう。","🇬🇧 イギリス：ほら、始めるぞ！","🇺🇸 アメリカ：君ならできる！","🇨🇳 中国：焦らず進めるある！"];
+let ci=0;
+function save(){try{localStorage.setItem("hetaliaTasks",JSON.stringify(tasks))}catch(e){alert("この画面では保存できない場合があるよ。公開したアプリで試してね。")}}
+function render(){let list=document.getElementById("list");list.innerHTML="";tasks.forEach((t,i)=>{let li=document.createElement("li");let label=document.createElement("label");let cb=document.createElement("input");cb.type="checkbox";cb.checked=t.done;cb.onchange=()=>{tasks[i].done=cb.checked;save();render()};label.append(cb,document.createTextNode(" "+t.subject+"："+t.name));if(t.done)label.style.textDecoration="line-through";let del=document.createElement("button");del.textContent="削除";del.onclick=()=>{tasks.splice(i,1);save();render()};li.append(label,document.createElement("br"),del);list.append(li)});let done=tasks.filter(t=>t.done).length;document.getElementById("progress").textContent="達成率："+(tasks.length?Math.round(done/tasks.length*100):0)+"%（"+done+"/"+tasks.length+"件）"}
+function addTask(){let input=document.getElementById("task");if(!input.value.trim())return;tasks.push({subject:document.getElementById("subject").value,name:input.value.trim(),done:false});input.value="";save();render()}
+function changeCheer(){ci=(ci+1)%cheers.length;document.getElementById("cheer").textContent=cheers[ci]}
+render();
+</script>
+</body>
+</html>
