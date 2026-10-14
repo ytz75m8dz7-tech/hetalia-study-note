@@ -1,285 +1,476 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#765887">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5eee3">
 <title>ヘタリア勉強ノート</title>
 <style>
 :root {
-  --purple:#765887;
-  --pale:#f7f0fa;
-  --line:#dfcfe7;
-  --ink:#382d40;
+  --bg: #f8f3ea;
+  --card: #fffdf8;
+  --ink: #39352f;
+  --accent: #557d68;
+  --soft: #e6eee4;
+  --line: #e6ded1;
 }
-* { box-sizing:border-box; }
+* { box-sizing: border-box; }
 body {
-  margin:0; padding:20px;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:var(--pale); color:var(--ink);
+  margin: 0;
+  padding: 18px 14px 35px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
 }
-main { max-width:650px; margin:auto; }
-h1 { color:var(--purple); font-size:27px; }
-h2 { font-size:18px; margin:0 0 12px; }
-.panel {
-  background:white; border:1px solid var(--line);
-  border-radius:18px; padding:16px; margin:16px 0;
+main { max-width: 650px; margin: auto; }
+h1 { font-size: 25px; margin: 4px 0 6px; }
+h2 { font-size: 17px; margin: 0 0 12px; }
+p { line-height: 1.6; }
+.sub { color: #777064; font-size: 13px; margin-top: 0; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin: 13px 0;
+  box-shadow: 0 3px 10px #59452b0b;
 }
-button, input, select {
-  font:inherit; border-radius:12px; padding:12px;
-  border:1px solid var(--line); max-width:100%;
+.hero {
+  background: linear-gradient(135deg, #e5eee3, #f9e8d9);
+  border: none;
+  padding: 21px 18px;
+}
+label { display: block; font-size: 13px; margin: 10px 0 5px; }
+input, select, button {
+  font: inherit;
+  border-radius: 11px;
+}
+input[type="text"], input[type="date"], select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d9d0c2;
+  background: white;
+  color: var(--ink);
+  min-height: 43px;
 }
 button {
-  background:var(--purple); color:white;
-  border:0; cursor:pointer;
+  border: 0;
+  padding: 11px 14px;
+  background: var(--accent);
+  color: white;
+  font-weight: 650;
+  cursor: pointer;
 }
-input, select { background:white; color:var(--ink); }
-input[type="date"] { width:100%; }
-.field { display:flex; gap:8px; flex-wrap:wrap; }
-.field input[type="text"] { flex:1; min-width:150px; }
-.field select { flex:1; min-width:110px; }
-.muted { color:#776b7f; font-size:14px; }
-.big { font-size:22px; font-weight:700; }
-.task {
-  display:flex; align-items:center; gap:10px;
-  padding:12px 0; border-bottom:1px solid #eee5f2;
+button:active { opacity: .75; }
+button.secondary { background: #eee8de; color: #494238; }
+button.delete { background: #f5e3df; color: #8a443b; padding: 8px 10px; }
+button.full { width: 100%; margin-top: 12px; }
+.formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat {
+  background: #f3eee5;
+  border-radius: 13px;
+  padding: 12px 6px;
+  text-align: center;
 }
-.task:last-child { border-bottom:0; }
-.task .taskname { flex:1; overflow-wrap:anywhere; }
-.task.done .taskname {
-  text-decoration:line-through; color:#8d8193;
-}
-.task input[type="checkbox"] { width:20px; height:20px; }
-.delete { background:#eee7f1; color:#594564; padding:8px 10px; }
-.avatar {
-  width:68px; height:68px; border-radius:50%;
-  background:#f0e4f7; display:flex; align-items:center;
-  justify-content:center; font-size:36px;
-  border:2px solid var(--line);
-}
-.character { display:flex; align-items:center; gap:14px; }
+.stat strong { display: block; font-size: 22px; }
+.stat span { font-size: 11px; color: #756e62; }
 .progress {
-  height:12px; background:#eee5f2; border-radius:99px;
-  overflow:hidden; margin:10px 0;
+  height: 12px;
+  background: #e8e1d6;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 10px 0 5px;
 }
-#bar { height:100%; width:0%; background:var(--purple); }
-.smallbtn { padding:8px 12px; }
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #6e9a79;
+  border-radius: 20px;
+  transition: width .2s;
+}
+.character {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.avatar {
+  flex: 0 0 65px;
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fffaf0;
+  border: 2px solid #e6d8bf;
+  font-size: 34px;
+}
+.charname { font-weight: 750; font-size: 16px; }
+#message { font-size: 14px; margin: 5px 0 0; }
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.task:last-child { border-bottom: 0; }
+.task input[type="checkbox"] {
+  width: 21px;
+  height: 21px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+.tasktext { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.tasktitle { font-weight: 600; }
+.task.done .tasktitle {
+  text-decoration: line-through;
+  color: #888176;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  background: var(--soft);
+  border-radius: 6px;
+  padding: 3px 7px;
+  margin-top: 5px;
+}
+.empty { color: #898174; font-size: 14px; text-align: center; padding: 18px 5px; }
+.small { color: #81796d; font-size: 12px; }
+.sectionhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+@media (max-width: 380px) {
+  body { padding: 12px 10px; }
+  .card { padding: 13px; }
+  h1 { font-size: 22px; }
+}
 </style>
 </head>
 <body>
 <main>
-  <h1>🌍 ヘタリア勉強ノート</h1>
-  <p>推しと一緒に、今日も一歩ずつ！</p>
-
-  <section class="panel">
-    <h2>📅 今日の課題</h2>
-    <label for="day">管理する日付</label>
-    <input id="day" type="date">
-    <p class="muted">日付を変えると、その日の課題に切り替わるよ。</p>
-  </section>
-
-  <section class="panel">
-    <h2>➕ 課題を追加</h2>
-    <div class="field">
-      <select id="subject" aria-label="教科">
-        <option>国語</option><option>数学</option>
-        <option>英語</option><option>理科</option>
-        <option>社会</option><option>その他</option>
-      </select>
-      <input id="taskInput" type="text"
-        placeholder="例：数学ワーク p.40" maxlength="120">
-    </div>
-    <p><button id="addBtn">課題を追加</button></p>
-  </section>
-
-  <section class="panel">
-    <h2>⭐ 今日の達成率</h2>
-    <div class="big" id="rate">0%</div>
-    <div class="progress"><div id="bar"></div></div>
-    <p id="count" class="muted">0件中0件完了</p>
-    <p class="big">🔥 連続記録：<span id="streak">0</span>日</p>
-    <p class="muted">課題を1つ以上完了した日を数えるよ。</p>
-  </section>
-
-  <section class="panel">
-    <h2>📚 教科で絞り込む</h2>
-    <select id="filter" aria-label="表示する教科">
-      <option value="すべて">すべての教科</option>
-      <option>国語</option><option>数学</option>
-      <option>英語</option><option>理科</option>
-      <option>社会</option><option>その他</option>
-    </select>
-    <div id="tasks"></div>
-    <p id="empty" class="muted">この日の課題はまだないよ。追加してみよう！</p>
-  </section>
-
-  <section class="panel">
-    <h2>💌 推しからの応援</h2>
+  <section class="card hero">
+    <div style="font-size:13px">🌍 AXIS POWERS HETALIA × STUDY</div>
+    <h1>ヘタリア勉強ノート</h1>
+    <p class="sub">今日の一歩が、明日の自分につながる！</p>
     <div class="character">
       <div class="avatar" id="avatar">🇮🇹</div>
       <div>
-        <strong id="charName">イタリア</strong>
-        <p id="cheer">ひとつずつ頑張ろ〜！</p>
+        <div class="charname" id="charname">イタリア</div>
+        <p id="message">一緒にがんばろうね！終わったらパスタ食べよう〜！</p>
       </div>
     </div>
-    <p><button id="changeBtn">応援キャラを変える</button></p>
+    <button class="secondary full" id="changeChar">🌟 応援キャラをチェンジ！</button>
   </section>
 
-  <p class="muted">
-    💾 課題はこのブラウザに保存されます。
-    ブラウザのデータを消すと課題も消える場合があります。
-  </p>
+  <section class="card">
+    <h2>⭐ 勉強の記録</h2>
+    <div class="stats">
+      <div class="stat"><strong id="percent">0%</strong><span>選択日の達成率</span></div>
+      <div class="stat"><strong id="completed">0/0</strong><span>完了した課題</span></div>
+      <div class="stat"><strong id="streak">0日</strong><span>連続勉強記録</span></div>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="small" id="progressText">まずは課題を追加してみよう！</div>
+  </section>
+
+  <section class="card">
+    <h2>📅 日付を選ぶ</h2>
+    <label for="selectedDate">課題を表示・追加する日</label>
+    <input type="date" id="selectedDate">
+    <p class="small">日付を変えると、その日の課題に切り替わるよ！</p>
+  </section>
+
+  <section class="card">
+    <h2>✏️ 課題を追加</h2>
+    <label for="taskTitle">課題の内容</label>
+    <input type="text" id="taskTitle" placeholder="例：数学ワーク p.20〜22">
+    <div class="formrow">
+      <div>
+        <label for="subject">教科</label>
+        <select id="subject">
+          <option>国語</option>
+          <option>数学</option>
+          <option>英語</option>
+          <option>理科</option>
+          <option>社会</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div>
+        <label for="taskDate">提出・実施日</label>
+        <input type="date" id="taskDate">
+      </div>
+    </div>
+    <button class="full" id="addTask">＋ 課題を追加する</button>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead">
+      <h2>📚 課題一覧</h2>
+    </div>
+    <label for="filterSubject">教科で絞り込み</label>
+    <select id="filterSubject">
+      <option value="すべて">すべての教科</option>
+      <option>国語</option>
+      <option>数学</option>
+      <option>英語</option>
+      <option>理科</option>
+      <option>社会</option>
+      <option>その他</option>
+    </select>
+    <div id="taskList"></div>
+    <p class="small">課題はこの端末のブラウザに自動保存されるよ。</p>
+  </section>
+
+  <section class="card">
+    <h2>📖 教科別まとめ</h2>
+    <div id="subjectSummary"></div>
+  </section>
+
+  <p class="small" style="text-align:center">🌟 一歩ずつで大丈夫。自分のペースで進もう！ 🌟</p>
 </main>
 
 <script>
-const $ = id => document.getElementById(id);
-const STORAGE_KEY = "hetaliaStudyNoteV2";
+(function () {
+  const STORAGE_KEY = "hetaliaStudyNoteV2";
+  const OLD_KEY = "hetaliaTasks";
+  const $ = id => document.getElementById(id);
 
-const characters = [
-  {flag:"🇮🇹",name:"イタリア",msg:"ひとつずつ頑張ろ〜！"},
-  {flag:"🇩🇪",name:"ドイツ",msg:"計画を立てて、着実に進めよう。"},
-  {flag:"🇯🇵",name:"日本",msg:"焦らず、一つずつ取り組みましょう。"},
-  {flag:"🇬🇧",name:"イギリス",msg:"やると決めたら、最後までやり抜け！"},
-  {flag:"🇺🇸",name:"アメリカ",msg:"君ならできるぞ！ Let's go!"},
-  {flag:"🇨🇳",name:"中国",msg:"少しずつ続けるのが大事ある！"}
-];
-
-function localDate(d = new Date()) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-let data = {tasks:[], character:0, completedDays:[]};
-
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed.tasks)) data.tasks = parsed.tasks;
-    if (Number.isInteger(parsed.character)) data.character = parsed.character;
-    if (Array.isArray(parsed.completedDays)) data.completedDays = parsed.completedDays;
+  function localDate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   }
-} catch (e) {
-  console.log("保存データを読み込めませんでした");
-}
-function save() {
+
+  const today = localDate(new Date());
+  $("selectedDate").value = today;
+  $("taskDate").value = today;
+
+  let tasks = [];
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) {
-    alert("保存できなかったよ。ブラウザの設定を確認してね。");
-  }
-}
-function tasksForDay() {
-  return data.tasks.filter(t => t.date === $("day").value);
-}
-function updateCompletedDays() {
-  const days = new Set(data.tasks.filter(t => t.done).map(t => t.date));
-  data.completedDays = [...days].sort();
-}
-function getStreak() {
-  const days = new Set(data.completedDays);
-  let d = new Date();
-  if (!days.has(localDate(d))) d.setDate(d.getDate()-1);
-  let count = 0;
-  while (days.has(localDate(d))) {
-    count++;
-    d.setDate(d.getDate()-1);
-  }
-  return count;
-}
-function renderTasks() {
-  const all = tasksForDay();
-  const filter = $("filter").value;
-  const shown = all.filter(t => filter === "すべて" || t.subject === filter);
-  $("tasks").replaceChildren();
-  $("empty").hidden = shown.length > 0;
-
-  shown.forEach(task => {
-    const row = document.createElement("div");
-    row.className = "task" + (task.done ? " done" : "");
-
-    const check = document.createElement("input");
-    check.type = "checkbox";
-    check.checked = task.done;
-    check.setAttribute("aria-label", task.name + " 完了");
-    check.addEventListener("change", () => {
-      task.done = check.checked;
-      updateCompletedDays();
-      save();
-      render();
-    });
-
-    const name = document.createElement("span");
-    name.className = "taskname";
-    name.textContent = task.subject + "： " + task.name;
-
-    const del = document.createElement("button");
-    del.className = "delete";
-    del.textContent = "削除";
-    del.addEventListener("click", () => {
-      if (confirm("この課題を削除する？")) {
-        data.tasks = data.tasks.filter(t => t.id !== task.id);
-        updateCompletedDays();
-        save();
-        render();
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) tasks = parsed;
+    } else {
+      // 古いデータは形式が不明なため、自動変換せず安全に残す
+      const oldData = localStorage.getItem(OLD_KEY);
+      if (oldData) {
+        console.info("以前の課題データは旧キーに保存されています。");
       }
-    });
-
-    row.append(check, name, del);
-    $("tasks").append(row);
-  });
-
-  const done = all.filter(t => t.done).length;
-  const rate = all.length ? Math.round(done / all.length * 100) : 0;
-  $("rate").textContent = rate + "%";
-  $("bar").style.width = rate + "%";
-  $("count").textContent = `${all.length}件中${done}件完了`;
-  $("streak").textContent = getStreak();
-}
-function renderCharacter() {
-  const c = characters[data.character % characters.length];
-  $("avatar").textContent = c.flag;
-  $("charName").textContent = c.name;
-  $("cheer").textContent = c.msg;
-}
-function render() {
-  renderTasks();
-  renderCharacter();
-}
-$("day").value = localDate();
-$("day").addEventListener("change", renderTasks);
-$("filter").addEventListener("change", renderTasks);
-
-$("addBtn").addEventListener("click", () => {
-  const name = $("taskInput").value.trim();
-  if (!name) {
-    alert("課題を入力してね！");
-    return;
+    }
+  } catch (error) {
+    tasks = [];
   }
-  data.tasks.push({
-    id: Date.now().toString() + Math.random().toString(16).slice(2),
-    date: $("day").value || localDate(),
-    subject: $("subject").value,
-    name,
-    done:false
-  });
-  $("taskInput").value = "";
-  updateCompletedDays();
-  save();
-  render();
-});
-$("taskInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") $("addBtn").click();
-});
-$("changeBtn").addEventListener("click", () => {
-  data.character = (data.character + 1) % characters.length;
-  save();
-  renderCharacter();
-});
 
-updateCompletedDays();
-render();
+  let charIndex = 0;
+  const characters = [
+    { flag: "🇮🇹", name: "イタリア", messages: [
+      "一緒にがんばろうね！終わったらパスタ食べよう〜！",
+      "一個終わっただけでもすごいよ〜！次もファイト！",
+      "焦らずいこう！休憩も忘れないでね！"
+    ]},
+    { flag: "🇯🇵", name: "日本", messages: [
+      "一つずつ、丁寧に進めていきましょう。",
+      "日々の積み重ねが力になります。応援しております。",
+      "休憩も大切に、無理なく進めてくださいね。"
+    ]},
+    { flag: "🇩🇪", name: "ドイツ", messages: [
+      "計画を立てて、一つずつ確実に片づけるぞ！",
+      "よし、今日の目標を確認だ！",
+      "努力は力になる。次の課題へ進もう！"
+    ]},
+    { flag: "🇬🇧", name: "イギリス", messages: [
+      "ちゃんと頑張ってるじゃないか。自信を持て！",
+      "一気にやろうとするなよ。順番に片づけろ！",
+      "今日はここまで、って決めるのも大事だからな。"
+    ]},
+    { flag: "🇺🇸", name: "アメリカ", messages: [
+      "君ならできる！今日のヒーローを目指そう！",
+      "一問ずつクリアだ！その調子！",
+      "完璧じゃなくていい、前に進もう！"
+    ]},
+    { flag: "🇨🇳", name: "中国", messages: [
+      "こつこつ続けるのが大事ある！頑張るよろし！",
+      "少しずつでも進んでるある。えらいある！",
+      "疲れたら休むよろし。無理は禁物ある！"
+    ]},
+    { flag: "🇫🇷", name: "フランス", messages: [
+      "頑張ってる君に拍手！自分を褒めてあげてね。",
+      "勉強も自分のペースで。応援してるよ！",
+      "小さな達成も立派な一歩だよ。"
+    ]}
+  ];
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+      alert("保存できなかったよ。ブラウザの設定を確認してね。");
+    }
+  }
+
+  function renderCharacter() {
+    const c = characters[charIndex];
+    $("avatar").textContent = c.flag;
+    $("charname").textContent = c.name;
+    const messages = c.messages;
+    $("message").textContent = messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  function getStreak() {
+    const days = new Set(
+      tasks.filter(t => t.done && t.doneDate).map(t => t.doneDate)
+    );
+    let cursor = new Date();
+    if (!days.has(localDate(cursor))) {
+      cursor.setDate(cursor.getDate() - 1);
+      if (!days.has(localDate(cursor))) return 0;
+    }
+    let count = 0;
+    while (days.has(localDate(cursor))) {
+      count++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return count;
+  }
+
+  function render() {
+    const date = $("selectedDate").value || today;
+    const filter = $("filterSubject").value;
+    const daily = tasks.filter(t => t.date === date);
+    const doneCount = daily.filter(t => t.done).length;
+    const percent = daily.length ? Math.round(doneCount / daily.length * 100) : 0;
+
+    $("percent").textContent = percent + "%";
+    $("completed").textContent = doneCount + "/" + daily.length;
+    $("streak").textContent = getStreak() + "日";
+    $("progressBar").style.width = percent + "%";
+    $("progressText").textContent = daily.length
+      ? (percent === 100 ? "🎉 全部完了！お疲れさま！" : "あと " + (daily.length - doneCount) + " 件で今日の課題クリア！")
+      : "まずは課題を追加してみよう！";
+
+    const visible = daily.filter(t => filter === "すべて" || t.subject === filter);
+    const list = $("taskList");
+    list.replaceChildren();
+
+    if (!visible.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = daily.length ? "この教科の課題はないよ！" : "この日の課題はまだないよ。追加してみよう！";
+      list.appendChild(empty);
+    } else {
+      visible.forEach(task => {
+        const row = document.createElement("div");
+        row.className = "task" + (task.done ? " done" : "");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = !!task.done;
+        checkbox.setAttribute("aria-label", task.title + "を完了");
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          task.doneDate = task.done ? localDate(new Date()) : null;
+          save();
+          render();
+        });
+
+        const content = document.createElement("div");
+        content.className = "tasktext";
+        const title = document.createElement("div");
+        title.className = "tasktitle";
+        title.textContent = task.title;
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = task.subject;
+        content.append(title, tag);
+
+        const del = document.createElement("button");
+        del.className = "delete";
+        del.textContent = "削除";
+        del.addEventListener("click", () => {
+          if (confirm("この課題を削除する？")) {
+            tasks = tasks.filter(t => t.id !== task.id);
+            save();
+            render();
+          }
+        });
+
+        row.append(checkbox, content, del);
+        list.appendChild(row);
+      });
+    }
+
+    const subjects = ["国語", "数学", "英語", "理科", "社会", "その他"];
+    const summary = $("subjectSummary");
+    summary.replaceChildren();
+    subjects.forEach(subject => {
+      const items = daily.filter(t => t.subject === subject);
+      if (!items.length) return;
+      const line = document.createElement("p");
+      line.style.margin = "8px 0";
+      const label = document.createElement("strong");
+      label.textContent = subject + "：";
+      const detail = document.createElement("span");
+      detail.textContent = items.filter(t => t.done).length + "/" + items.length + " 完了";
+      line.append(label, detail);
+      summary.appendChild(line);
+    });
+    if (!summary.childNodes.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "課題を追加すると、ここに教科別の進み具合が出るよ！";
+      summary.appendChild(empty);
+    }
+  }
+
+  $("addTask").addEventListener("click", () => {
+    const title = $("taskTitle").value.trim();
+    if (!title) {
+      alert("課題の内容を入力してね！");
+      $("taskTitle").focus();
+      return;
+    }
+    const date = $("taskDate").value || $("selectedDate").value || today;
+    tasks.push({
+      id: String(Date.now()) + Math.random().toString(16).slice(2),
+      title,
+      subject: $("subject").value,
+      date,
+      done: false,
+      doneDate: null
+    });
+    $("selectedDate").value = date;
+    $("taskTitle").value = "";
+    save();
+    render();
+  });
+
+  $("taskTitle").addEventListener("keydown", event => {
+    if (event.key === "Enter") $("addTask").click();
+  });
+
+  $("selectedDate").addEventListener("change", () => {
+    $("taskDate").value = $("selectedDate").value;
+    render();
+  });
+  $("filterSubject").addEventListener("change", render);
+  $("changeChar").addEventListener("click", () => {
+    charIndex = (charIndex + 1) % characters.length;
+    renderCharacter();
+  });
+
+  renderCharacter();
+  render();
+})();
 </script>
 </body>
 </html>
+
